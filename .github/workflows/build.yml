@@ -1,0 +1,26 @@
+name: Build Docker Image and Export Tar
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Docker image name (e.g. mycroftai/mimic3:latest)'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and Save Image
+        run: |
+          docker pull ${{ github.event.inputs.image }}
+          docker save ${{ github.event.inputs.image }} > image.tar
+          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mimic3-image
+          path: image.tar
